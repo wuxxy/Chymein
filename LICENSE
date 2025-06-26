@@ -1,21 +1,21 @@
-MIT License
+Personal-Use License for Chymein
 
 Copyright (c) 2025 wuxxy
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission to use the Software for personal, non-commercial, single-user purposes is granted without fee to any individual person who obtains a copy of this software and its documentation files (the "Software"), as Chymein, and whose activities are not prohibited under applicable law. The following conditions apply:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The Software shall not be utilized, in full or in part, for any commercial purpose, including but not limited to the sale of products and services, use of the Software in business, commercialization of derived work, or inclusion of the Software in any product or service sold for business purposes, without specific written authority and a commercial license from the copyright holder.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+They are invited to review, learn from, and be inspired by the Software.
+
+Users can create addons, plugins, or extensions to Chymein freely, and can modify Chymein in such a way that the core is not changed and can be made extensible by such addons. Changing the core Software itself is permitted for personal use only, and cannot be redistributed or reused outside the realm of this license.
+
+Improvements and additions to the Software are welcome. However, any contributions incorporated do not provide contributors co-ownership unless explicitly agreed in writing.
+
+Redistribution of the Software, in its original form or modified, is prohibited without prior written permission except sharing in non-commercial personal use.
+
+The above notice and this permission notice must be included in all copies or substantial portions of the Software used under the terms of personal use.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT ANY WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHOR OR COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Commercial licensing inquiries should be addressed to: [your email or website here]
