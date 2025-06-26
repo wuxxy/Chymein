@@ -9,5 +9,5 @@ type User struct {
 	Username   string `gorm:"unique"`
 	Email      string `gorm:"unique"`
 	Password   string
-	Permission int
+	Permission []int
 }
