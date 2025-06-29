@@ -1,4 +1,6 @@
 <script>
+    import {axiosInstance} from "$lib/axios.js";
+
     let props = $props();
     const status = props.status;
 
@@ -7,13 +9,18 @@
     let password = $state('');
     let confirmPassword = $state('');
     let submitting = $state(false);
-
+    let errorMsg = $state('')
     async function createSuperadmin() {
         submitting = true;
-        const res = await fetch('/setup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+        if(password != confirmPassword) {
+            errorMsg = "Passwords do not match"
+            submitting = false;
+            return
+        }
+        const res = await axiosInstance.post('/create_admin', {
+            username,
+            email,
+            password
         });
         submitting = false;
 
@@ -67,7 +74,10 @@
                 <p class="text-gray-700 text-base">
                     Create a <span class="font-semibold text-gray-900">Superadmin</span> account to finish setup.
                 </p>
-                <div class="space-y-3 select-none">
+                <div class="space-y-3 select-none flex flex-col gap-1">
+                    {#if !!errorMsg}
+                        <span class="bg-red-200 w-full rounded-lg ring-1 ring-red-400 flex-1 p-2">{errorMsg}</span>
+                    {/if}
                     <input
                             class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-800"
                             placeholder="Email"

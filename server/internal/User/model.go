@@ -14,10 +14,10 @@ type User struct {
 	gorm.Model
 
 	// Identity
-	ID       ulid.ULID `gorm:"type:uuid;primaryKey"`
-	Username string    `gorm:"uniqueIndex;not null"`
-	Email    string    `gorm:"uniqueIndex;not null"`
-	Password string    `gorm:"not null"`
+	ID       string `gorm:"type:char(26);primaryKey"`
+	Username string `gorm:"uniqueIndex;not null"`
+	Email    string `gorm:"uniqueIndex;not null"`
+	Password string `gorm:"not null"`
 
 	// Permissions & Roles
 	Permissions datatypes.JSONMap `gorm:"type:jsonb"`
@@ -49,24 +49,20 @@ type User struct {
 	AdminNotes string
 
 	// Extensibility
-	Metadata   datatypes.JSONMap `gorm:"type:jsonb"` // user-specific plugin hooks
-	PluginData datatypes.JSONMap `gorm:"type:jsonb"` // plugin-owned state
+	Metadata   datatypes.JSONMap `gorm:"type:jsonb"`
+	PluginData datatypes.JSONMap `gorm:"type:jsonb"`
 }
 
-func (u *User) BeforeCreate() (err error) {
-	if ulid.ULID.IsZero(u.ID) {
-		entropy := rand.New(rand.NewSource(time.Now().UnixNano()))
-		ms := ulid.Timestamp(time.Now())
-		u.ID, err = ulid.New(ms, entropy)
-		if err != nil {
-			return err
-		}
+func (u *User) BeforeCreate(_ *gorm.DB) error {
+	if u.ID == "" {
+		t := time.Now().UTC()
+		entropy := ulid.Monotonic(rand.New(rand.NewSource(t.UnixNano())), 0)
+		u.ID = ulid.MustNew(ulid.Timestamp(t), entropy).String()
 	}
-	return
+	return nil
 }
 
 func (u *User) Create(db *gorm.DB) error {
-	// Validate required fields
 	if u.Username == "" {
 		return errors.New("an username is required to create a user")
 	}
@@ -76,23 +72,21 @@ func (u *User) Create(db *gorm.DB) error {
 	if u.Password == "" {
 		return errors.New("a password is required to create a user")
 	}
-
-	// Attempt to create the user
 	return db.Create(u).Error
 }
+
 func (u *User) Update(db *gorm.DB) error {
-	// Require a valid ULID (or whatever ID system you're using)
-	if ulid.ULID.IsZero(u.ID) {
+	if u.ID == "" {
 		return errors.New("user cannot be updated without an ID")
 	}
-
 	return db.Model(&User{}).Where("id = ?", u.ID).Updates(u).Error
 }
+
 func (u *User) GetByAny(db *gorm.DB) error {
 	query := db.Model(&User{})
 
 	switch {
-	case u.ID.Compare(ulid.ULID{}) != 0:
+	case u.ID != "":
 		query = query.Where("id = ?", u.ID)
 	case u.Username != "":
 		query = query.Where("username = ?", u.Username)
@@ -103,4 +97,10 @@ func (u *User) GetByAny(db *gorm.DB) error {
 	}
 
 	return query.First(u).Error
+}
+
+func NewULID() string {
+	t := time.Now().UTC()
+	entropy := ulid.Monotonic(rand.New(rand.NewSource(t.UnixNano())), 0)
+	return ulid.MustNew(ulid.Timestamp(t), entropy).String()
 }

@@ -1,8 +1,12 @@
 package Core
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -67,3 +71,100 @@ func (s *Server) ReadAllCookies(c echo.Context) []*http.Cookie {
 }
 
 var Config Cfg = Cfg{}
+
+func LoadConfig() {
+	const configPath = "config.json"
+	var cfg Cfg
+
+	loadDefaults := func() Cfg {
+		return Cfg{
+			Port:    Config.Port,
+			IsSetup: false,
+			Database: DatabaseInfo{
+				Host: "localhost",
+				Port: "5432",
+				User: "",
+				Pass: "",
+				Name: "",
+				SSL:  false,
+			},
+		}
+	}
+
+	writeDefaults := func(cfg Cfg) {
+		jsonBytes, err := json.MarshalIndent(cfg, "", "  ")
+		if err != nil {
+			panic("failed to marshal default config: " + err.Error())
+		}
+		err = os.WriteFile(configPath, jsonBytes, 0644)
+		if err != nil {
+			panic("failed to write default config: " + err.Error())
+		}
+		fmt.Println("Default config written to", configPath)
+	}
+
+	// Try to open the config file
+	file, err := os.OpenFile(configPath, os.O_RDWR, 0644)
+	if errors.Is(err, os.ErrNotExist) {
+		fmt.Println("Config file not found, creating with defaults.")
+		cfg = loadDefaults()
+		writeDefaults(cfg)
+		Config = cfg
+		return
+	} else if err != nil {
+		panic("failed to open config file: " + err.Error())
+	}
+	defer file.Close()
+
+	// Try to parse the config
+	bytes, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println("Failed to read config, resetting...")
+		cfg = loadDefaults()
+		writeDefaults(cfg)
+		Config = cfg
+		return
+	}
+
+	err = json.Unmarshal(bytes, &cfg)
+	if err != nil {
+		fmt.Println("Invalid config JSON, resetting...")
+		cfg = loadDefaults()
+		writeDefaults(cfg)
+		Config = cfg
+		return
+	}
+
+	Config = cfg
+}
+func UpdateConfig(updateFn func(cfg *Cfg)) error {
+	const configPath = "config.json"
+
+	// Read existing config
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		return fmt.Errorf("failed to read config file: %w", err)
+	}
+
+	var cfg Cfg
+	if err := json.Unmarshal(data, &cfg); err != nil {
+		return fmt.Errorf("failed to parse config file: %w", err)
+	}
+
+	// Apply your update logic
+	updateFn(&cfg)
+
+	// Save updated config
+	jsonBytes, err := json.MarshalIndent(cfg, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal updated config: %w", err)
+	}
+	if err := os.WriteFile(configPath, jsonBytes, 0644); err != nil {
+		return fmt.Errorf("failed to write updated config: %w", err)
+	}
+
+	// Update in-memory config too
+	Config = cfg
+
+	return nil
+}

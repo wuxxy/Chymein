@@ -1,11 +1,7 @@
 package main
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
-	"os"
 	"server/internal/Admin"
 	"server/internal/Core"
 	"server/internal/User"
@@ -15,7 +11,7 @@ import (
 )
 
 func init() {
-	LoadConfig()
+	Core.LoadConfig()
 }
 
 func main() {
@@ -28,10 +24,10 @@ func main() {
 	server.RegisterRoute("GET", "/status", Admin.Status)
 
 	if !server.Config.IsSetup {
-		server.RegisterRoute("POST", "/setup", Admin.Setup)
+		server.RegisterRoute("POST", "/create_admin", Admin.CreateSuperAdmin)
 	}
 
-	User.RegisterController(server)
+	server.RegisterRoute("POST", "/api/user/create", User.CreateUserHandler)
 
 	if err := server.Start(); err != nil {
 		panic(err)
@@ -58,69 +54,4 @@ func ConnectToDB() {
 	} else {
 		fmt.Printf("Successfully connected to database %s\n", Core.Config.Database.Name)
 	}
-}
-func LoadConfig() {
-	const configPath = "config.json"
-	var cfg Core.Cfg
-
-	loadDefaults := func() Core.Cfg {
-		return Core.Cfg{
-			Port:    Core.Config.Port,
-			IsSetup: false,
-			Database: Core.DatabaseInfo{
-				Host: "localhost",
-				Port: "5432",
-				User: "",
-				Pass: "",
-				Name: "",
-				SSL:  false,
-			},
-		}
-	}
-
-	writeDefaults := func(cfg Core.Cfg) {
-		jsonBytes, err := json.MarshalIndent(cfg, "", "  ")
-		if err != nil {
-			panic("failed to marshal default config: " + err.Error())
-		}
-		err = os.WriteFile(configPath, jsonBytes, 0644)
-		if err != nil {
-			panic("failed to write default config: " + err.Error())
-		}
-		fmt.Println("Default config written to", configPath)
-	}
-
-	// Try to open the config file
-	file, err := os.OpenFile(configPath, os.O_RDWR, 0644)
-	if errors.Is(err, os.ErrNotExist) {
-		fmt.Println("Config file not found, creating with defaults.")
-		cfg = loadDefaults()
-		writeDefaults(cfg)
-		Core.Config = cfg
-		return
-	} else if err != nil {
-		panic("failed to open config file: " + err.Error())
-	}
-	defer file.Close()
-
-	// Try to parse the config
-	bytes, err := io.ReadAll(file)
-	if err != nil {
-		fmt.Println("Failed to read config, resetting...")
-		cfg = loadDefaults()
-		writeDefaults(cfg)
-		Core.Config = cfg
-		return
-	}
-
-	err = json.Unmarshal(bytes, &cfg)
-	if err != nil {
-		fmt.Println("Invalid config JSON, resetting...")
-		cfg = loadDefaults()
-		writeDefaults(cfg)
-		Core.Config = cfg
-		return
-	}
-
-	Core.Config = cfg
 }
