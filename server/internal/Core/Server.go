@@ -19,8 +19,11 @@ type Server struct {
 	Config Cfg
 }
 
+var StartTime time.Time
+
 func NewServer(port string) *Server {
 	e := echo.New()
+	StartTime = time.Now()
 	return &Server{
 		Echo: e,
 		Config: Cfg{

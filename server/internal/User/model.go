@@ -30,6 +30,7 @@ type User struct {
 	IsActive         bool `gorm:"default:true"`
 	IsVerified       bool `gorm:"default:false"`
 	TwoFactorEnabled bool `gorm:"default:false"`
+	Sessions         []Session
 
 	// Profile
 	DateOfBirth  *time.Time

@@ -2,7 +2,6 @@ package Admin
 
 import (
 	"net/http"
-	"server/internal/Common"
 	"server/internal/Core"
 	"time"
 
@@ -14,7 +13,7 @@ func Status(c echo.Context) error {
 		"port":       Core.Config.Port,
 		"is_setup":   Core.Config.IsSetup,
 		"database":   Core.DB.IsConnected(),
-		"time_alive": time.Now().Sub(Common.StartTime).String(),
+		"time_alive": time.Now().Sub(Core.StartTime).String(),
 	}
 
 	return c.JSON(http.StatusOK, status)
