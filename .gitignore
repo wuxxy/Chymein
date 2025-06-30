@@ -37,7 +37,7 @@ build/
 .svelte-kit/  # SvelteKit
 .svelte-cache/
 
-config.json
+/server/config.json
 
 # Static builds
 out/
