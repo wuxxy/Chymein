@@ -1,5 +1,5 @@
 <script>
-    import {axiosInstance} from "$lib/axios.js";
+    import { axiosInstance } from '$lib/utils/axios.ts';
 
     let props = $props();
     const status = props.status;
@@ -9,25 +9,37 @@
     let password = $state('');
     let confirmPassword = $state('');
     let submitting = $state(false);
-    let errorMsg = $state('')
-    async function createSuperadmin() {
-        submitting = true;
-        if(password != confirmPassword) {
-            errorMsg = "Passwords do not match"
-            submitting = false;
-            return
-        }
-        const res = await axiosInstance.post('/create_admin', {
-            username,
-            email,
-            password
-        });
-        submitting = false;
+    let errorMsg = $state('');
+    let successMsg = $state('');
 
-        if (res.ok) {
-            location.reload();
-        } else {
-            alert('Failed to create superadmin');
+    async function createSuperadmin() {
+        errorMsg = '';
+        successMsg = '';
+        submitting = true;
+
+        if (password !== confirmPassword) {
+            errorMsg = 'Passwords do not match.';
+            submitting = false;
+            return;
+        }
+
+        try {
+            const res = await axiosInstance.post('/create_admin', {
+                username,
+                email,
+                password
+            });
+
+            if (res.status === 201 || res.status === 200) {
+                successMsg = 'Superadmin created successfully. Reloading...';
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                errorMsg = res.data?.error || 'Failed to create superadmin.';
+            }
+        } catch (err) {
+            errorMsg = err.response?.data?.error || 'Server error occurred.';
+        } finally {
+            submitting = false;
         }
     }
 
@@ -64,7 +76,7 @@
                 </ul>
                 <button
                         class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800 transition w-fit"
-                        onclick={refresh}
+                        on:click={refresh}
                 >
                     Refresh Page
                 </button>
@@ -74,37 +86,53 @@
                 <p class="text-gray-700 text-base">
                     Create a <span class="font-semibold text-gray-900">Superadmin</span> account to finish setup.
                 </p>
-                <div class="space-y-3 select-none flex flex-col gap-1">
-                    {#if !!errorMsg}
-                        <span class="bg-red-200 w-full rounded-lg ring-1 ring-red-400 flex-1 p-2">{errorMsg}</span>
-                    {/if}
+
+                <!-- Feedback Message -->
+                {#if errorMsg}
+                    <div class="bg-red-100 border border-red-300 text-red-800 text-sm rounded px-4 py-2">
+                        {errorMsg}
+                    </div>
+                {/if}
+
+                {#if successMsg}
+                    <div class="bg-green-100 border border-green-300 text-green-800 text-sm rounded px-4 py-2">
+                        {successMsg}
+                    </div>
+                {/if}
+
+                <!-- Form -->
+                <div class="space-y-3 flex flex-col select-none">
                     <input
-                            class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-800"
+                            class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-800 disabled:bg-gray-100"
                             placeholder="Email"
                             type="email"
                             bind:value={email}
+                            disabled={submitting}
                     />
                     <input
-                            class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-800"
+                            class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-800 disabled:bg-gray-100"
                             placeholder="Username"
                             bind:value={username}
+                            disabled={submitting}
                     />
                     <input
-                            class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-800"
+                            class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-800 disabled:bg-gray-100"
                             placeholder="Password"
                             type="password"
                             bind:value={password}
+                            disabled={submitting}
                     />
                     <input
-                            class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-800"
+                            class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-800 disabled:bg-gray-100"
                             placeholder="Confirm Password"
                             type="password"
                             bind:value={confirmPassword}
+                            disabled={submitting}
                     />
                     <hr class="text-gray-300" />
                     <button
-                            class="w-full bg-gray-900 text-white py-2 rounded hover:bg-gray-800 transition"
-                            onclick={createSuperadmin}
+                            class="w-full bg-gray-900 text-white py-2 rounded hover:bg-gray-800 transition disabled:opacity-50"
+                            on:click={createSuperadmin}
                             disabled={submitting}
                     >
                         {submitting ? 'Creating...' : 'Create Superadmin'}

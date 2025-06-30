@@ -37,6 +37,8 @@ build/
 .svelte-kit/  # SvelteKit
 .svelte-cache/
 
+config.json
+
 # Static builds
 out/
 public/build/
@@ -64,3 +66,4 @@ pnpm-debug.log*
 *.swp
 *.DS_Store
 *.log
+

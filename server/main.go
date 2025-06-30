@@ -29,6 +29,9 @@ func main() {
 
 	server.RegisterRoute("POST", "/api/user/create", User.CreateUserHandler)
 
+	// Router
+	server.RegisterRoute("GET", "/site")
+
 	if err := server.Start(); err != nil {
 		panic(err)
 	}

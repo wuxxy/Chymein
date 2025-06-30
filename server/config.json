@@ -2,9 +2,9 @@
   "port": "6969",
   "database": {
     "host": "localhost",
-    "port": "5433",
+    "port": "5432",
     "user": "postgres",
-    "pass": "20080204",
+    "pass": "Biryani7047$",
     "name": "chymein",
     "ssl": false
   },
