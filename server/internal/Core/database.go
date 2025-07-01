@@ -3,7 +3,7 @@ package Core
 import (
 	"errors"
 	"fmt"
-	"server/internal/User"
+	Database2 "server/internal/Database"
 	"sync"
 
 	"gorm.io/driver/postgres"
@@ -36,7 +36,7 @@ func (d *Database) Connect(dsn string) error {
 		return fmt.Errorf("failed to connect to DB: %w", err)
 	}
 	// Auto-migrate your models
-	err = db.AutoMigrate(&User.User{}, &User.Session{}) // you can add more: &Post{}, &Thread{}
+	err = db.AutoMigrate(&Database2.User{}, &Database2.Session{}) // you can add more: &Post{}, &Thread{}
 	if err != nil {
 		panic("failed to migrate database: " + err.Error())
 	}

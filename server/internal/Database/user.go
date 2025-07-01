@@ -1,4 +1,4 @@
-package User
+package Database
 
 import (
 	"errors"
@@ -31,6 +31,7 @@ type User struct {
 	IsVerified       bool `gorm:"default:false"`
 	TwoFactorEnabled bool `gorm:"default:false"`
 	Sessions         []Session
+	Locked           bool `gorm:"default:false"`
 
 	// Profile
 	DateOfBirth  *time.Time
@@ -97,10 +98,4 @@ func (u *User) GetByAny(db *gorm.DB) error {
 	}
 
 	return query.First(u).Error
-}
-
-func NewULID() string {
-	t := time.Now().UTC()
-	entropy := ulid.Monotonic(rand.New(rand.NewSource(t.UnixNano())), 0)
-	return ulid.MustNew(ulid.Timestamp(t), entropy).String()
 }

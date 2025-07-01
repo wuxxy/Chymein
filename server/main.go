@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"server/internal/Admin"
-	"server/internal/Core"
-	"server/internal/User"
-
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"net/http"
+	"server/internal/Core"
+	"server/internal/User"
+	"server/internal/server"
 )
 
 func init() {
@@ -15,24 +15,20 @@ func init() {
 }
 
 func main() {
-	server := Core.NewServer(Core.Config.Port)
+	s := Core.NewServer(Core.Config.Port)
 	ConnectToDB()
-	server.Echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:5173"},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	s.Echo.Use(User.SessionMiddleware())
+	s.Echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowCredentials: true, // 🔥 this is the one you're missing
 	}))
-	server.RegisterRoute("GET", "/status", Admin.Status)
-
-	if !server.Config.IsSetup {
-		server.RegisterRoute("POST", "/create_admin", Admin.CreateSuperAdmin)
-	}
-
-	server.RegisterRoute("POST", "/api/user/create", User.CreateUserHandler)
+	server.Router(s)
 
 	// Router
-	server.RegisterRoute("GET", "/site")
-
-	if err := server.Start(); err != nil {
+	// server.RegisterRoute("GET", "/site")
+	if err := s.Start(); err != nil {
 		panic(err)
 	}
 }

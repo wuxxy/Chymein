@@ -1,11 +1,11 @@
-package Admin
+package User
 
 import (
 	"github.com/alexedwards/argon2id"
 	"log"
 	"net/http"
 	"server/internal/Core"
-	"server/internal/User"
+	"server/internal/Database"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -29,7 +29,7 @@ func CreateSuperAdmin(c echo.Context) error {
 			"error": "All fields are required",
 		})
 	}
-	if !User.IsValidEmail(req.Email) {
+	if !IsValidEmail(req.Email) {
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "Invalid email format",
 		})
@@ -38,8 +38,8 @@ func CreateSuperAdmin(c echo.Context) error {
 	if err != nil {
 		log.Println(err)
 	}
-	adminUser := User.User{
-		ID:               User.NewULID(),
+	adminUser := Database.User{
+		ID:               NewULID(),
 		Username:         req.Username,
 		Email:            req.Email,
 		Password:         hash,
@@ -65,7 +65,7 @@ func CreateSuperAdmin(c echo.Context) error {
 		AdminNotes:       "",
 	}
 
-	session := User.Session{
+	session := Database.Session{
 		UserID: adminUser.ID,
 	}
 
@@ -86,7 +86,7 @@ func CreateSuperAdmin(c echo.Context) error {
 		Value:    session.ID, // ← already a string
 		Path:     "/",
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteNoneMode,
 	})
 
 	// Mark setup complete
