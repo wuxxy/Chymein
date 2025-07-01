@@ -4,7 +4,7 @@
     let buttons = [
         {
             name: "Forums",
-            link: "/forums"
+            link: "/content"
         },
         {
             

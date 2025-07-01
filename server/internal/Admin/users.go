@@ -9,12 +9,14 @@ import (
 	"server/internal/User"
 )
 
+const ADMIN_USERS_PERMISSION = "app.admin:users"
+
 func AllUsers(c echo.Context) error {
 	user, authenticated := User.GetUser(c)
 	if !authenticated {
 		return echo.ErrUnauthorized
 	}
-	if !(Permission.CheckIfUserHasPermission(user, "app.admin:users") || user.SuperAdmin) {
+	if !(Permission.CheckIfUserHasPermission(user, ADMIN_USERS_PERMISSION) || user.SuperAdmin) {
 		return echo.ErrUnauthorized
 	}
 	var users []Database.User

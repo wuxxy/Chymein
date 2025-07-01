@@ -32,7 +32,8 @@ type User struct {
 	IsVerified       bool `gorm:"default:false"`
 	TwoFactorEnabled bool `gorm:"default:false"`
 	Sessions         []Session
-	Locked           bool `gorm:"default:false"`
+	Locked           bool   `gorm:"default:false"`
+	Posts            []Post `gorm:"foreignKey:AuthorID"`
 
 	// Profile
 	DateOfBirth  *time.Time

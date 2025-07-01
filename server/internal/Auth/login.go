@@ -25,6 +25,11 @@ func Login(c echo.Context) error {
 			"error": "Invalid request body",
 		})
 	}
+	if req.Username == "" || req.Password == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "All fields are required",
+		})
+	}
 	// Get User
 	var user Database.User
 	result := Core.DB.Get().First(&user, "username = ?", req.Username)

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { user } from "$lib/stores/auth";
+    import {Button, Toolbar} from "bits-ui";
     let { children } = $props();
 </script>
 
@@ -14,19 +15,28 @@
                 Logged in as: <span class="font-medium text-gray-800">{$user?.Username}</span>
             </div>
         </div>
-        <nav class="mt-3">
-            <ul class="flex gap-4 text-sm">
-                <li>
-                    <a href="/" class="text-gray-600 hover:text-black transition-colors">Home</a>
-                </li>
-                <li>
-                    <a href="/admin/users" class="text-gray-600 hover:text-black transition-colors">Users</a>
-                </li>
-                <li>
-                    <a href="/admin/styles" class="text-gray-600 hover:text-black transition-colors">Styles</a>
-                </li>
-            </ul>
-        </nav>
+        <div class="flex flex-row">
+            <Toolbar.Root>
+                <Toolbar.Group class="flex gap-1 px-2 py-1">
+                    <Toolbar.GroupItem>
+                        <Button.Root class="data-[active=true]:bg-gray-100" data-active="true">Home</Button.Root>
+                    </Toolbar.GroupItem>
+                    <Toolbar.GroupItem>
+                        <Button.Root href="/admin/users">Users</Button.Root>
+                    </Toolbar.GroupItem>
+                    <Toolbar.GroupItem>
+                        <Button.Root href="/admin/content">Content</Button.Root>
+                    </Toolbar.GroupItem>
+                    <Toolbar.GroupItem>
+                        <Button.Root>Styling</Button.Root>
+                    </Toolbar.GroupItem>
+                    <Toolbar.GroupItem>
+                        <Button.Root>Plugins</Button.Root>
+                    </Toolbar.GroupItem>
+                </Toolbar.Group>
+            </Toolbar.Root>
+
+        </div>
     </header>
 
     <!-- Page Content -->
