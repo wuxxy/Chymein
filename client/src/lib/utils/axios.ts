@@ -30,3 +30,8 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+export const AuthedInstance =  (request: { headers: { get: (arg0: string) => any; }; }) => axiosInstance.create({
+    headers: {
+        Cookie: request.headers.get('cookie') ?? ''
+    },
+})

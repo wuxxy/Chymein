@@ -13,7 +13,7 @@
     });
 </script>
 
-{#if data.status.is_setup || !data.status.connected}
+{#if data.status.is_setup}
     {@render children()}
 {:else}
     <SetupForm status={data.status} />

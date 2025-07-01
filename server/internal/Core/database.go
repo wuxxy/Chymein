@@ -36,7 +36,7 @@ func (d *Database) Connect(dsn string) error {
 		return fmt.Errorf("failed to connect to DB: %w", err)
 	}
 	// Auto-migrate your models
-	err = db.AutoMigrate(&Database2.User{}, &Database2.Session{}) // you can add more: &Post{}, &Thread{}
+	err = db.AutoMigrate(&Database2.User{}, &Database2.Session{}, &Database2.Role{})
 	if err != nil {
 		panic("failed to migrate database: " + err.Error())
 	}

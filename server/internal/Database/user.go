@@ -20,9 +20,10 @@ type User struct {
 	Password string `gorm:"not null"`
 
 	// Permissions & Roles
-	Permissions datatypes.JSONMap `gorm:"type:jsonb"`
+	Permissions []string `gorm:"type:text[]"`
 	Admin       bool
 	SuperAdmin  bool
+	Roles       []Role `gorm:"many2many:user_roles"`
 
 	// Activity & Auth
 	LastActive       time.Time

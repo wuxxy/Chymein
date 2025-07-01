@@ -1,6 +1,7 @@
 package server
 
 import (
+	"server/internal/Admin"
 	"server/internal/Auth"
 	"server/internal/Core"
 	"server/internal/User"
@@ -15,4 +16,5 @@ func Router(server *Core.Server) {
 
 	server.RegisterRoute("POST", "/Auth/login", Auth.Login)
 	server.RegisterRoute("GET", "/Auth/me", Auth.Me)
+	server.RegisterRoute("GET", "/Admin/users", Admin.AllUsers)
 }
